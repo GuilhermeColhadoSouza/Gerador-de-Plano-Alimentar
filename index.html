@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Plano Alimentar Dinâmico</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #eef2ff;
+            --protein: #4895ef;
+            --carb: #f72585;
+            --fat: #ffc300;
+            --fruit: #34d399;
+            --dark: #2b2d42;
+            --gray: #8d99ae;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --border: #e9ecef;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            color: var(--dark);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid var(--border);
+            position: relative;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        h3 {
+            color: var(--dark);
+            font-size: 1.3rem;
+            margin-top: 15px;
+            margin-bottom: 12px;
+        }
+
+        p.subtitle {
+            font-size: 1.3rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.05rem;
+        }
+
+        textarea,
+        input[type="text"],
+        input[type="tel"],
+        input[type="number"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            background-color: var(--light);
+        }
+
+        textarea:focus,
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            background-color: var(--white);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .meal-section {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .meal-section:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .meal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .remove-btn {
+            background-color: #fee2e2;
+            color: var(--danger);
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .remove-btn:hover {
+            background-color: #fecaca;
+        }
+
+        .food-category {
+            background-color: var(--primary-light);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 8px;
+        }
+
+        .category-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+        }
+
+        .protein-color {
+            background-color: var(--protein);
+        }
+
+        .carb-color {
+            background-color: var(--carb);
+        }
+
+        .fat-color {
+            background-color: var(--fat);
+        }
+
+        .fruit-color {
+            background-color: var(--fruit);
+        }
+
+        .category-title {
+            font-weight: 600;
+            margin: 0;
+            color: var(--dark);
+            font-size: 1.05rem;
+        }
+
+        .food-items {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 60px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .food-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--light);
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .food-item:hover {
+            background-color: #efefef;
+        }
+
+        .food-item-text {
+            margin: 0;
+            flex-grow: 1;
+            font-size: 0.95rem;
+        }
+
+        .food-item-remove {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .food-item-remove:hover {
+            background-color: #fee2e2;
+        }
+
+        .add-food-form {
+            display: flex;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .add-food-form input {
+            flex-grow: 1;
+            margin-bottom: 0;
+        }
+
+        .add-food-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .add-food-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 15px;
+        }
+
+        .left-buttons,
+        .right-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button i {
+            font-size: 1.1rem;
+        }
+
+        button.primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        button.primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
+        }
+
+        button.secondary {
+            background-color: var(--light);
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+
+        button.secondary:hover {
+            background-color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-meal-container {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            gap: 10px;
+            background-color: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px dashed var(--border);
+        }
+
+        .add-meal-container input {
+            flex-grow: 1;
+            margin-bottom: 0;
+        }
+
+        /* PDF Preview */
+        .pdf-preview {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .pdf-content {
+            background: white;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            border-radius: 16px;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-preview {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            background: var(--light);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-preview:hover {
+            background-color: var(--border);
+        }
+
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .pdf-header:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        .pdf-header h2 {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 16px;
+            border: none;
+        }
+
+        .pdf-header h2:after {
+            display: none;
+        }
+
+        .pdf-header p {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .pdf-section {
+            margin-bottom: 35px;
+        }
+
+        .pdf-section h3 {
+            font-size: 22px;
+            margin-bottom: 18px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            position: relative;
+        }
+
+        .pdf-section h3:after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        .pdf-meal-content {
+            background-color: var(--primary-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .pdf-category {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .pdf-category-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: var(--dark);
+        }
+
+        .pdf-food-items {
+            padding-left: 15px;
+        }
+
+        .pdf-food-item {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 15px;
+        }
+
+        .pdf-food-item:before {
+            content: "•";
+            font-size: 18px;
+            line-height: 1;
+            color: var(--primary);
+        }
+
+        .pdf-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .pdf-water-info {
+            background-color: #e0f2fe;
+            border-radius: 10px;
+            padding: 16px;
+            margin: 25px 0;
+            text-align: center;
+            font-weight: 600;
+            color: #0369a1;
+            border-left: 4px solid #0ea5e9;
+            font-size: 16px;
+        }
+
+        .pdf-greeting {
+            margin-bottom: 30px;
+            font-style: italic;
+            line-height: 1.7;
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            border-left: 4px solid var(--primary);
+        }
+
+        .pdf-greeting:before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 60px;
+            color: rgba(67, 97, 238, 0.1);
+            line-height: 1;
+            font-family: Georgia, serif;
+        }
+
+        .color-dot {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .no-items-message {
+            font-style: italic;
+            color: #94a3b8;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .info-text {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .food-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .pdf-notes {
+            font-style: italic;
+            color: #4b5563;
+            line-height: 1.7;
+        }
+
+        .pdf-branding {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .add-food-form {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .left-buttons,
+            .right-buttons {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .pdf-content {
+                padding: 25px;
+                margin: 20px auto;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Gerador de Plano Alimentar</h1>
+            <p class="subtitle">Crie um plano alimentar personalizado para seus alunos</p>
+        </header>
+
+        <div class="form-group">
+            <label for="studentName"><i class="fas fa-user"></i> Nome do Aluno</label>
+            <input type="text" id="studentName" placeholder="Digite o nome do aluno">
+        </div>
+
+        <div class="form-group">
+            <label for="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</label>
+            <input type="tel" id="whatsapp" placeholder="Digite o número de WhatsApp">
+        </div>
+
+        <div class="form-group">
+            <label for="greeting"><i class="fas fa-comment-alt"></i> Saudação / Mensagem Personalizada</label>
+            <textarea id="greeting" placeholder="Digite uma mensagem personalizada para seu aluno...">.
+Siga a ilustração para te ajudar a montar o prato, escolha apenas 1 opção de carboidrato, proteína, gordura e fruta, alguns alimentos vão ter substituição e vai está ao lado ou abaixo outros não, na dúvida me chama no WhatsApp ou se tiver outras opções que você goste talvez consigo substituir ou não, me avise
+E bora fazer acontecer, estou disponível no whatsapp 👍🏿
+.
+🔵PROTEÍNA 
+🔴CARBOIDRATO
+🟡GORDURA
+🟢FRUTA
+.
+REEDUCAÇÃO ALIMENTAÇÃO
+.
+.
+Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
+        </div>
+
+        <h2><i class="fas fa-utensils"></i> Adicionar Refeições</h2>
+
+        <div class="add-meal-container">
+            <input type="text" id="mealName" placeholder="Nome da refeição (ex: Café da Manhã, Almoço...)">
+            <button id="addMealBtn" class="add-food-btn"><i class="fas fa-plus"></i> Adicionar Refeição</button>
+        </div>
+
+        <div id="mealsContainer">
+            <!-- Refeições serão adicionadas aqui dinamicamente -->
+        </div>
+
+        <div class="action-buttons">
+            <div class="left-buttons">
+                <button id="previewBtn" class="primary"><i class="fas fa-eye"></i> Visualizar PDF</button>
+                <button id="downloadBtn" class="primary"><i class="fas fa-download"></i> Baixar PDF</button>
+            </div>
+            <div class="right-buttons">
+                <button id="resetBtn" class="secondary"><i class="fas fa-trash-alt"></i> Limpar Formulário</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdfPreview" class="pdf-preview">
+        <div class="pdf-content">
+            <button class="close-preview" id="closePreview"><i class="fas fa-times"></i></button>
+            <div id="pdfContent">
+                <!-- Conteúdo do PDF será gerado aqui -->
+            </div>
+            <div class="pdf-actions">
+                <button id="downloadPdfBtn" class="primary"><i class="fas fa-download"></i> Baixar PDF</button>
+                <button id="closePdfBtn" class="secondary"><i class="fas fa-times"></i> Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Templates para diferentes categorias de alimentos
+        const mealTemplate = (id, name) => `
+            <div class="meal-section" id="meal-${id}">
+                <div class="meal-header">
+                    <h3 class="meal-title">${name}</h3>
+                    <button class="remove-btn" onclick="removeMeal('meal-${id}')"><i class="fas fa-trash-alt"></i> Remover</button>
+                </div>
+                
+                <div class="food-category">
+                    <div class="category-header">
+                        <div class="category-color protein-color"></div>
+                        <h4 class="category-title">PROTEÍNA</h4>
+                    </div>
+                    <div class="food-items" id="protein-${id}">
+                        <p class="no-items-message">Nenhum item adicionado</p>
+                    </div>
+                    <div class="add-food-form">
+                        <input type="text" id="protein-input-${id}" placeholder="Digite uma proteína (ex: 4 OVOS)">
+                        <button class="add-food-btn" onclick="addFoodItem('protein-${id}', 'protein-input-${id}')"><i class="fas fa-plus"></i> Adicionar</button>
+                    </div>
+                </div>
+                
+                <div class="food-category">
+                    <div class="category-header">
+                        <div class="category-color carb-color"></div>
+                        <h4 class="category-title">CARBOIDRATO</h4>
+                    </div>
+                    <div class="food-items" id="carb-${id}">
+                        <p class="no-items-message">Nenhum item adicionado</p>
+                    </div>
+                    <div class="add-food-form">
+                        <input type="text" id="carb-input-${id}" placeholder="Digite um carboidrato (ex: 300g ARROZ)">
+                        <button class="add-food-btn" onclick="addFoodItem('carb-${id}', 'carb-input-${id}')"><i class="fas fa-plus"></i> Adicionar</button>
+                    </div>
+                </div>
+                
+                <div class="food-category">
+                    <div class="category-header">
+                        <div class="category-color fat-color"></div>
+                        <h4 class="category-title">GORDURA</h4>
+                    </div>
+                    <div class="food-items" id="fat-${id}">
+                        <p class="no-items-message">Nenhum item adicionado</p>
+                    </div>
+                    <div class="add-food-form">
+                        <input type="text" id="fat-input-${id}" placeholder="Digite uma gordura (ex: 14g AZEITE)">
+                        <button class="add-food-btn" onclick="addFoodItem('fat-${id}', 'fat-input-${id}')"><i class="fas fa-plus"></i> Adicionar</button>
+                    </div>
+                </div>
+                
+                <div class="food-category">
+                    <div class="category-header">
+                        <div class="category-color fruit-color"></div>
+                        <h4 class="category-title">FRUTA</h4>
+                    </div>
+                    <div class="food-items" id="fruit-${id}">
+                        <p class="no-items-message">Nenhum item adicionado</p>
+                    </div>
+                    <div class="add-food-form">
+                        <input type="text" id="fruit-input-${id}" placeholder="Digite uma fruta (ex: 1 BANANA)">
+                        <button class="add-food-btn" onclick="addFoodItem('fruit-${id}', 'fruit-input-${id}')"><i class="fas fa-plus"></i> Adicionar</button>
+                    </div>
+                </div>
+                
+                <div class="food-category">
+                    <div class="category-header">
+                        <h4 class="category-title">OBSERVAÇÕES (opcional)</h4>
+                    </div>
+                    <textarea id="notes-${id}" placeholder="Adicione observações para esta refeição se necessário..."></textarea>
+                </div>
+            </div>
+        `;
+
+        const foodItemTemplate = (id, text) => `
+            <div class="food-item" id="${id}">
+                <p class="food-item-text">${text}</p>
+                <button class="food-item-remove" onclick="removeFoodItem('${id}')"><i class="fas fa-times"></i></button>
+            </div>
+        `;
+
+        // Contador para IDs únicos
+        let mealCounter = 0;
+        let foodItemCounter = 0;
+
+        // Adicionar uma nova refeição
+        document.getElementById('addMealBtn').addEventListener('click', () => {
+            const mealName = document.getElementById('mealName').value.trim();
+            if (mealName) {
+                const mealId = mealCounter++;
+                const mealHtml = mealTemplate(mealId, mealName);
+
+                const container = document.getElementById('mealsContainer');
+                const div = document.createElement('div');
+                div.innerHTML = mealHtml;
+                container.appendChild(div.firstElementChild);
+
+                document.getElementById('mealName').value = '';
+            } else {
+                alert('Por favor, digite um nome para a refeição!');
+            }
+        });
+
+        // Função para adicionar um item de comida
+        function addFoodItem(categoryId, inputId) {
+            const inputElement = document.getElementById(inputId);
+            const foodText = inputElement.value.trim();
+
+            if (foodText) {
+                const categoryContainer = document.getElementById(categoryId);
+
+                // Remover a mensagem "Nenhum item adicionado" se presente
+                const noItemsMessage = categoryContainer.querySelector('.no-items-message');
+                if (noItemsMessage) {
+                    noItemsMessage.remove();
+                }
+
+                const foodId = `food-${foodItemCounter++}`;
+                const foodItemHtml = foodItemTemplate(foodId, foodText);
+
+                const div = document.createElement('div');
+                div.innerHTML = foodItemHtml;
+                categoryContainer.appendChild(div.firstElementChild);
+
+                inputElement.value = '';
+            } else {
+                alert('Por favor, digite o nome do alimento!');
+            }
+        }
+
+        // Função para remover um item de comida
+        function removeFoodItem(id) {
+            const item = document.getElementById(id);
+            const category = item.parentElement;
+            item.remove();
+
+            // Se não houver mais itens, adicionar a mensagem "Nenhum item adicionado"
+            if (category.children.length === 0) {
+                const noItemsMessage = document.createElement('p');
+                noItemsMessage.className = 'no-items-message';
+                noItemsMessage.textContent = 'Nenhum item adicionado';
+                category.appendChild(noItemsMessage);
+            }
+        }
+
+        // Função para remover uma refeição
+        function removeMeal(id) {
+            if (confirm('Tem certeza que deseja remover esta refeição?')) {
+                document.getElementById(id).remove();
+            }
+        }
+
+        // Função para gerar o conteúdo do PDF
+        function generatePDF() {
+            const studentName = document.getElementById('studentName').value.trim();
+            const whatsapp = document.getElementById('whatsapp').value.trim();
+            const greeting = document.getElementById('greeting').value.trim();
+            const mealSections = document.querySelectorAll('.meal-section');
+
+            if (!studentName) {
+                alert('Por favor, preencha o nome do aluno!');
+                return false;
+            }
+
+            let pdfContent = `
+        <div class="pdf-header">
+            <h2>Plano Alimentar</h2>
+            <p><strong>Aluno:</strong> ${studentName}</p>
+            ${whatsapp ? `<p><strong>WhatsApp:</strong> ${whatsapp}</p>` : ''}
+            <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+        </div>
+    `;
+
+            if (greeting) {
+                pdfContent += `
+            <div class="pdf-greeting">
+                ${greeting}
+            </div>
+        `;
+            }
+
+            pdfContent += `
+        <div class="food-legend">
+            <div class="legend-item">
+                <span class="color-dot protein-color"></span> Proteína
+            </div>
+            <div class="legend-item">
+                <span class="color-dot carb-color"></span> Carboidrato
+            </div>
+            <div class="legend-item">
+                <span class="color-dot fat-color"></span> Gordura
+            </div>
+            <div class="legend-item">
+                <span class="color-dot fruit-color"></span> Fruta
+            </div>
+        </div>
+    `;
+
+            if (mealSections.length === 0) {
+                pdfContent += `
+            <p class="no-items-message">Nenhuma refeição foi adicionada ao plano.</p>
+        `;
+            } else {
+                mealSections.forEach(mealSection => {
+                    const mealId = mealSection.id;
+                    const mealTitle = mealSection.querySelector('.meal-title').textContent;
+                    const notesTextarea = mealSection.querySelector('textarea');
+                    const notes = notesTextarea ? notesTextarea.value.trim() : '';
+
+                    pdfContent += `
+                <div class="pdf-section">
+                    <h3>${mealTitle}</h3>
+                    <div class="pdf-meal-content">
+            `;
+
+                    // Categorias de alimentos
+                    const categories = [
+                        { id: 'protein', name: 'Proteína', color: 'protein-color' },
+                        { id: 'carb', name: 'Carboidrato', color: 'carb-color' },
+                        { id: 'fat', name: 'Gordura', color: 'fat-color' },
+                        { id: 'fruit', name: 'Fruta', color: 'fruit-color' }
+                    ];
+
+                    categories.forEach(category => {
+                        const categoryId = `${category.id}-${mealId.split('-')[1]}`;
+                        const categoryContainer = document.getElementById(categoryId);
+                        const foodItems = categoryContainer.querySelectorAll('.food-item-text');
+
+                        pdfContent += `
+                    <div class="pdf-category">
+                        <div class="pdf-category-title">
+                            <span class="color-dot ${category.color}"></span>
+                            ${category.name.toUpperCase()}
+                        </div>
+                        <div class="pdf-food-items">
+                `;
+
+                        if (foodItems.length === 0) {
+                            pdfContent += `<p class="no-items-message">Nenhum item adicionado</p>`;
+                        } else {
+                            foodItems.forEach(item => {
+                                pdfContent += `<div class="pdf-food-item">${item.textContent}</div>`;
+                            });
+                        }
+
+                        pdfContent += `
+                        </div>
+                    </div>
+                `;
+                    });
+
+                    // Adicionar notas se houver
+                    if (notes) {
+                        pdfContent += `
+                    <div class="pdf-category">
+                        <div class="pdf-category-title">Observações</div>
+                        <div class="pdf-notes">${notes}</div>
+                    </div>
+                `;
+                    }
+
+                    pdfContent += `
+                    </div>
+                </div>
+            `;
+                });
+            }
+
+            // Adicionar informação sobre consumo de água
+            pdfContent += `
+        <div class="pdf-water-info">
+            <i class="fas fa-tint"></i> Consumo de água: MÍNIMO 5 Litros de água por dia
+        </div>
+    `;
+
+            // Adicionar branding no final do PDF
+            pdfContent += `
+        <div class="pdf-branding">
+            <p>Plano alimentar gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+        </div>
+    `;
+
+            document.getElementById('pdfContent').innerHTML = pdfContent;
+            return true;
+        }
+
+        // Abrir a visualização do PDF
+        document.getElementById('previewBtn').addEventListener('click', () => {
+            if (generatePDF()) {
+                document.getElementById('pdfPreview').style.display = 'block';
+            }
+        });
+
+        // Fechar a visualização do PDF
+        document.getElementById('closePreview').addEventListener('click', () => {
+            document.getElementById('pdfPreview').style.display = 'none';
+        });
+
+        document.getElementById('closePdfBtn').addEventListener('click', () => {
+            document.getElementById('pdfPreview').style.display = 'none';
+        });
+
+        // Baixar o PDF
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (generatePDF()) {
+                downloadPDF();
+            }
+        });
+
+        document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+            downloadPDF();
+        });
+
+        // Função para baixar o PDF
+        function downloadPDF() {
+            const studentName = document.getElementById('studentName').value.trim() || 'plano-alimentar';
+            const fileName = `${studentName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`;
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4');
+            const pdfContent = document.getElementById('pdfContent');
+
+            html2canvas(pdfContent, {
+                scale: 2,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = doc.internal.pageSize.getWidth();
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                let heightLeft = imgHeight;
+                let position = 0;
+                const margin = 40;
+
+                // Adicionar primeira página
+                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= (doc.internal.pageSize.getHeight() - margin);
+
+                // Adicionar páginas adicionais se necessário
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= (doc.internal.pageSize.getHeight() - margin);
+                }
+
+                doc.save(fileName);
+            });
+        }
+
+        // Limpar o formulário
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if (confirm('Tem certeza que deseja limpar todo o formulário? Esta ação não pode ser desfeita.')) {
+                document.getElementById('studentName').value = '';
+                document.getElementById('whatsapp').value = '';
+                document.getElementById('greeting').value = `
+Siga a ilustração para te ajudar a montar o prato, escolha apenas 1 opção de carboidrato, proteína, gordura e fruta, alguns alimentos vão ter substituição e vai está ao lado ou abaixo outros não, na dúvida me chama no WhatsApp ou se tiver outras opções que você goste talvez consigo substituir ou não, me avise
+E bora fazer acontecer, estou disponível no whatsapp 👍🏿
+.
+🔵PROTEÍNA 
+🔴CARBOIDRATO
+🟡GORDURA
+🟢FRUTA
+.
+REEDUCAÇÃO ALIMENTAÇÃO
+.
+.
+Seu consumo de água é no MININO: 5 Litros de água por dia`;
+                document.getElementById('mealName').value = '';
+                document.getElementById('mealsContainer').innerHTML = '';
+                mealCounter = 0;
+                foodItemCounter = 0;
+            }
+        });
+
+        // Adicionar alguns atalhos de teclado
+        document.addEventListener('keydown', function (event) {
+            // Enter no campo de nome da refeição adiciona a refeição
+            if (event.key === 'Enter' && document.activeElement === document.getElementById('mealName')) {
+                document.getElementById('addMealBtn').click();
+            }
+
+            // Ctrl+Enter para visualizar o PDF
+            if (event.key === 'Enter' && event.ctrlKey) {
+                document.getElementById('previewBtn').click();
+            }
+        });
+
+        // Iniciar com uma mensagem de boas-vindas quando a página carrega
+        window.addEventListener('load', function () {
+            if (document.getElementById('mealsContainer').children.length === 0) {
+                // Sugerir algumas refeições comuns para facilitar para o usuário
+                const suggestedMeals = [
+                    'Café da Manhã',
+                    'Lanche da Manhã',
+                    'Almoço',
+                    'Lanche da Tarde',
+                    'Jantar',
+                    'Ceia'
+                ];
+
+                // Adicionar exemplos de refeições automáticas
+                // Descomente o código abaixo se quiser que o aplicativo inicie com refeições de exemplo
+                /*
+                suggestedMeals.forEach(mealName => {
+                    const mealId = mealCounter++;
+                    const mealHtml = mealTemplate(mealId, mealName);
+                    
+                    const container = document.getElementById('mealsContainer');
+                    const div = document.createElement('div');
+                    div.innerHTML = mealHtml;
+                    container.appendChild(div.firstElementChild);
+                });
+                */
+            }
+        });
+    </script>
+</body>
+
+</html>
