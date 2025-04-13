@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4361ee">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Gerador de Plano Alimentar Dinâmico</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -125,7 +128,6 @@
 
         textarea,
         input[type="text"],
-        input[type="tel"],
         input[type="number"] {
             width: 100%;
             padding: 14px 16px;
@@ -148,6 +150,21 @@
         textarea {
             resize: vertical;
             min-height: 120px;
+        }
+
+        .water-input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .water-input-container input {
+            width: 80px;
+            text-align: center;
+        }
+
+        .water-input-container span {
+            font-weight: 500;
         }
 
         .meal-section {
@@ -204,7 +221,7 @@
             background-color: var(--primary-light);
             border-radius: 10px;
             padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             transition: all 0.2s;
         }
 
@@ -301,6 +318,7 @@
         .add-food-form input {
             flex-grow: 1;
             margin-bottom: 0;
+            min-width: 0;
         }
 
         .add-food-btn {
@@ -403,29 +421,30 @@
             background: rgba(0, 0, 0, 0.85);
             z-index: 1000;
             overflow-y: auto;
-            padding: 20px;
+            padding: 10px;
             backdrop-filter: blur(4px);
         }
 
         .pdf-content {
             background: white;
+            width: 95%;
             max-width: 800px;
-            margin: 40px auto;
-            padding: 40px;
-            border-radius: 16px;
+            margin: 20px auto;
+            padding: 30px;
+            border-radius: 12px;
             position: relative;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
         }
 
         .close-preview {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             font-size: 24px;
             background: var(--light);
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             cursor: pointer;
             color: var(--dark);
@@ -441,9 +460,9 @@
 
         .pdf-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             position: relative;
-            padding-bottom: 20px;
+            padding-bottom: 15px;
         }
 
         .pdf-header:after {
@@ -452,17 +471,18 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
+            width: 80px;
             height: 3px;
             background-color: var(--primary);
             border-radius: 2px;
         }
 
         .pdf-header h2 {
-            font-size: 28px;
+            font-size: 24px;
             color: var(--primary);
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             border: none;
+            padding-bottom: 0;
         }
 
         .pdf-header h2:after {
@@ -470,20 +490,21 @@
         }
 
         .pdf-header p {
-            margin-bottom: 8px;
-            font-size: 16px;
+            margin-bottom: 6px;
+            font-size: 15px;
         }
 
         .pdf-section {
-            margin-bottom: 35px;
+            margin-bottom: 25px;
+            page-break-inside: avoid;
         }
 
         .pdf-section h3 {
-            font-size: 22px;
-            margin-bottom: 18px;
+            font-size: 20px;
+            margin-bottom: 15px;
             color: var(--primary);
             border-bottom: 2px solid var(--border);
-            padding-bottom: 8px;
+            padding-bottom: 6px;
             position: relative;
         }
 
@@ -499,45 +520,48 @@
 
         .pdf-meal-content {
             background-color: var(--primary-light);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            page-break-inside: avoid;
         }
 
         .pdf-category {
             background-color: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+            page-break-inside: avoid;
         }
 
         .pdf-category-title {
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            font-size: 16px;
+            gap: 6px;
+            margin-bottom: 10px;
+            font-size: 15px;
             color: var(--dark);
         }
 
         .pdf-food-items {
-            padding-left: 15px;
+            padding-left: 12px;
         }
 
         .pdf-food-item {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 15px;
+            font-size: 14px;
+            page-break-inside: avoid;
         }
 
         .pdf-food-item:before {
             content: "•";
-            font-size: 18px;
+            font-size: 16px;
             line-height: 1;
             color: var(--primary);
         }
@@ -545,31 +569,33 @@
         .pdf-actions {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 40px;
+            gap: 12px;
+            margin-top: 30px;
         }
 
         .pdf-water-info {
             background-color: #e0f2fe;
-            border-radius: 10px;
-            padding: 16px;
-            margin: 25px 0;
+            border-radius: 8px;
+            padding: 14px;
+            margin: 20px 0;
             text-align: center;
             font-weight: 600;
             color: #0369a1;
             border-left: 4px solid #0ea5e9;
-            font-size: 16px;
+            font-size: 15px;
+            page-break-inside: avoid;
         }
 
         .pdf-greeting {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-style: italic;
-            line-height: 1.7;
+            line-height: 1.6;
             background-color: var(--light);
-            padding: 20px;
-            border-radius: 10px;
+            padding: 15px;
+            border-radius: 8px;
             position: relative;
             border-left: 4px solid var(--primary);
+            page-break-inside: avoid;
         }
 
         .pdf-greeting:before {
@@ -585,8 +611,8 @@
 
         .color-dot {
             display: inline-block;
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             margin-right: 6px;
         }
@@ -595,7 +621,8 @@
             font-style: italic;
             color: #94a3b8;
             text-align: center;
-            padding: 15px;
+            padding: 12px;
+            font-size: 14px;
         }
 
         .info-text {
@@ -609,11 +636,12 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            padding: 15px;
+            gap: 12px;
+            margin: 15px 0;
+            padding: 12px;
             background-color: var(--light);
-            border-radius: 10px;
+            border-radius: 8px;
+            page-break-inside: avoid;
         }
 
         .legend-item {
@@ -621,55 +649,213 @@
             align-items: center;
             gap: 6px;
             font-weight: 500;
+            font-size: 14px;
         }
 
         .pdf-notes {
             font-style: italic;
             color: #4b5563;
-            line-height: 1.7;
+            line-height: 1.6;
+            font-size: 14px;
         }
 
         .pdf-branding {
             text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
+            margin-top: 30px;
+            padding-top: 15px;
             border-top: 1px solid var(--border);
             color: var(--gray);
-            font-size: 14px;
+            font-size: 13px;
+            page-break-inside: avoid;
         }
 
+        /* Responsividade */
         @media (max-width: 768px) {
+            body {
+                padding-bottom: 20px;
+            }
+            
             .container {
                 padding: 20px;
-                margin: 10px;
+                margin: 15px;
+                border-radius: 12px;
             }
-
+            
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+                line-height: 1.3;
             }
-
-            .add-food-form {
-                flex-direction: column;
+            
+            p.subtitle {
+                font-size: 1.1rem;
             }
-
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .meal-section {
+                padding: 18px;
+            }
+            
+            .meal-title {
+                font-size: 1.3rem;
+            }
+            
+            .remove-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .food-category {
+                padding: 15px;
+            }
+            
+            .add-food-form button {
+                padding: 12px;
+            }
+            
+            .pdf-content {
+                padding: 20px;
+                margin: 15px auto;
+            }
+            
+            .pdf-header h2 {
+                font-size: 1.5rem;
+            }
+            
             .action-buttons {
                 flex-direction: column;
+                gap: 10px;
             }
-
-            .left-buttons,
-            .right-buttons {
-                justify-content: center;
+            
+            .left-buttons, .right-buttons {
                 width: 100%;
+                justify-content: stretch;
             }
-
-            .pdf-content {
-                padding: 25px;
-                margin: 20px auto;
-            }
-
+            
             button {
                 width: 100%;
                 justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            
+            textarea, 
+            input[type="text"], 
+            input[type="number"] {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .food-item {
+                padding: 8px 10px;
+            }
+            
+            .food-item-text {
+                font-size: 0.9rem;
+            }
+            
+            .add-meal-container {
+                flex-direction: column;
+                padding: 15px;
+                gap: 10px;
+            }
+            
+            .add-meal-container input {
+                width: 100%;
+                margin-bottom: 0;
+            }
+            
+            .add-meal-container button {
+                width: 100%;
+            }
+            
+            .action-buttons button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .pdf-section h3 {
+                font-size: 1.2rem;
+            }
+            
+            .pdf-food-item {
+                font-size: 0.9rem;
+            }
+            
+            .pdf-water-info {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            
+            .pdf-content {
+                padding: 15px;
+            }
+            
+            .close-preview {
+                top: 10px;
+                right: 10px;
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
+            }
+            
+            .water-input-container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .water-input-container input {
+                width: 100%;
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 12px;
+                margin: 8px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            h2 {
+                font-size: 1.1rem;
+            }
+            
+            .meal-title {
+                font-size: 1.1rem;
+            }
+            
+            .food-category {
+                padding: 12px;
+            }
+            
+            .add-food-form {
+                flex-direction: column;
+            }
+            
+            .pdf-header h2 {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -688,14 +874,16 @@
         </div>
 
         <div class="form-group">
-            <label for="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</label>
-            <input type="tel" id="whatsapp" placeholder="Digite o número de WhatsApp">
+            <label for="waterAmount"><i class="fas fa-tint"></i> Consumo Diário de Água (Litros)</label>
+            <div class="water-input-container">
+                <input type="number" id="waterAmount" min="1" max="20" step="0.5" value="5">
+                <span>litros por dia</span>
+            </div>
         </div>
 
         <div class="form-group">
             <label for="greeting"><i class="fas fa-comment-alt"></i> Saudação / Mensagem Personalizada</label>
-            <textarea id="greeting" placeholder="Digite uma mensagem personalizada para seu aluno...">.
-Siga a ilustração para te ajudar a montar o prato, escolha apenas 1 opção de carboidrato, proteína, gordura e fruta, alguns alimentos vão ter substituição e vai está ao lado ou abaixo outros não, na dúvida me chama no WhatsApp ou se tiver outras opções que você goste talvez consigo substituir ou não, me avise
+            <textarea id="greeting" placeholder="Digite uma mensagem personalizada para seu aluno...">Siga a ilustração para te ajudar a montar o prato, escolha apenas 1 opção de carboidrato, proteína, gordura e fruta, alguns alimentos vão ter substituição e vai está ao lado ou abaixo outros não, na dúvida me chama no WhatsApp ou se tiver outras opções que você goste talvez consigo substituir ou não, me avise
 E bora fazer acontecer, estou disponível no whatsapp 👍🏿
 .
 🔵PROTEÍNA 
@@ -703,10 +891,7 @@ E bora fazer acontecer, estou disponível no whatsapp 👍🏿
 🟡GORDURA
 🟢FRUTA
 .
-REEDUCAÇÃO ALIMENTAÇÃO
-.
-.
-Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
+REEDUCAÇÃO ALIMENTAÇÃO</textarea>
         </div>
 
         <h2><i class="fas fa-utensils"></i> Adicionar Refeições</h2>
@@ -899,7 +1084,7 @@ Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
         // Função para gerar o conteúdo do PDF
         function generatePDF() {
             const studentName = document.getElementById('studentName').value.trim();
-            const whatsapp = document.getElementById('whatsapp').value.trim();
+            const waterAmount = document.getElementById('waterAmount').value.trim();
             const greeting = document.getElementById('greeting').value.trim();
             const mealSections = document.querySelectorAll('.meal-section');
 
@@ -909,43 +1094,42 @@ Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
             }
 
             let pdfContent = `
-        <div class="pdf-header">
-            <h2>Plano Alimentar</h2>
-            <p><strong>Aluno:</strong> ${studentName}</p>
-            ${whatsapp ? `<p><strong>WhatsApp:</strong> ${whatsapp}</p>` : ''}
-            <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
-        </div>
-    `;
+                <div class="pdf-header">
+                    <h2>Plano Alimentar</h2>
+                    <p><strong>Aluno:</strong> ${studentName}</p>
+                    <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+                </div>
+            `;
 
             if (greeting) {
                 pdfContent += `
-            <div class="pdf-greeting">
-                ${greeting}
-            </div>
-        `;
+                    <div class="pdf-greeting">
+                        ${greeting.replace(/\n/g, '<br>')}
+                    </div>
+                `;
             }
 
             pdfContent += `
-        <div class="food-legend">
-            <div class="legend-item">
-                <span class="color-dot protein-color"></span> Proteína
-            </div>
-            <div class="legend-item">
-                <span class="color-dot carb-color"></span> Carboidrato
-            </div>
-            <div class="legend-item">
-                <span class="color-dot fat-color"></span> Gordura
-            </div>
-            <div class="legend-item">
-                <span class="color-dot fruit-color"></span> Fruta
-            </div>
-        </div>
-    `;
+                <div class="food-legend">
+                    <div class="legend-item">
+                        <span class="color-dot protein-color"></span> Proteína
+                    </div>
+                    <div class="legend-item">
+                        <span class="color-dot carb-color"></span> Carboidrato
+                    </div>
+                    <div class="legend-item">
+                        <span class="color-dot fat-color"></span> Gordura
+                    </div>
+                    <div class="legend-item">
+                        <span class="color-dot fruit-color"></span> Fruta
+                    </div>
+                </div>
+            `;
 
             if (mealSections.length === 0) {
                 pdfContent += `
-            <p class="no-items-message">Nenhuma refeição foi adicionada ao plano.</p>
-        `;
+                    <p class="no-items-message">Nenhuma refeição foi adicionada ao plano.</p>
+                `;
             } else {
                 mealSections.forEach(mealSection => {
                     const mealId = mealSection.id;
@@ -954,10 +1138,10 @@ Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
                     const notes = notesTextarea ? notesTextarea.value.trim() : '';
 
                     pdfContent += `
-                <div class="pdf-section">
-                    <h3>${mealTitle}</h3>
-                    <div class="pdf-meal-content">
-            `;
+                        <div class="pdf-section">
+                            <h3>${mealTitle}</h3>
+                            <div class="pdf-meal-content">
+                    `;
 
                     // Categorias de alimentos
                     const categories = [
@@ -973,13 +1157,13 @@ Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
                         const foodItems = categoryContainer.querySelectorAll('.food-item-text');
 
                         pdfContent += `
-                    <div class="pdf-category">
-                        <div class="pdf-category-title">
-                            <span class="color-dot ${category.color}"></span>
-                            ${category.name.toUpperCase()}
-                        </div>
-                        <div class="pdf-food-items">
-                `;
+                            <div class="pdf-category">
+                                <div class="pdf-category-title">
+                                    <span class="color-dot ${category.color}"></span>
+                                    ${category.name.toUpperCase()}
+                                </div>
+                                <div class="pdf-food-items">
+                        `;
 
                         if (foodItems.length === 0) {
                             pdfContent += `<p class="no-items-message">Nenhum item adicionado</p>`;
@@ -990,41 +1174,41 @@ Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
                         }
 
                         pdfContent += `
-                        </div>
-                    </div>
-                `;
+                                </div>
+                            </div>
+                        `;
                     });
 
                     // Adicionar notas se houver
                     if (notes) {
                         pdfContent += `
-                    <div class="pdf-category">
-                        <div class="pdf-category-title">Observações</div>
-                        <div class="pdf-notes">${notes}</div>
-                    </div>
-                `;
+                            <div class="pdf-category">
+                                <div class="pdf-category-title">Observações</div>
+                                <div class="pdf-notes">${notes.replace(/\n/g, '<br>')}</div>
+                            </div>
+                        `;
                     }
 
                     pdfContent += `
-                    </div>
-                </div>
-            `;
+                            </div>
+                        </div>
+                    `;
                 });
             }
 
             // Adicionar informação sobre consumo de água
             pdfContent += `
-        <div class="pdf-water-info">
-            <i class="fas fa-tint"></i> Consumo de água: MÍNIMO 5 Litros de água por dia
-        </div>
-    `;
+                <div class="pdf-water-info">
+                    <i class="fas fa-tint"></i> Consumo de água: MÍNIMO ${waterAmount} Litros de água por dia
+                </div>
+            `;
 
             // Adicionar branding no final do PDF
             pdfContent += `
-        <div class="pdf-branding">
-            <p>Plano alimentar gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
-        </div>
-    `;
+                <div class="pdf-branding">
+                    <p>Plano alimentar gerado em ${new Date().toLocaleDateString('pt-BR')}</p>
+                </div>
+            `;
 
             document.getElementById('pdfContent').innerHTML = pdfContent;
             return true;
@@ -1034,27 +1218,30 @@ Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
         document.getElementById('previewBtn').addEventListener('click', () => {
             if (generatePDF()) {
                 document.getElementById('pdfPreview').style.display = 'block';
+                document.body.style.overflow = 'hidden';
             }
         });
 
         // Fechar a visualização do PDF
         document.getElementById('closePreview').addEventListener('click', () => {
             document.getElementById('pdfPreview').style.display = 'none';
+            document.body.style.overflow = 'auto';
         });
 
         document.getElementById('closePdfBtn').addEventListener('click', () => {
             document.getElementById('pdfPreview').style.display = 'none';
+            document.body.style.overflow = 'auto';
         });
 
         // Baixar o PDF
         document.getElementById('downloadBtn').addEventListener('click', () => {
             if (generatePDF()) {
-                downloadPDF();
+                setTimeout(downloadPDF, 300); // Pequeno delay para garantir que o conteúdo foi renderizado
             }
         });
 
         document.getElementById('downloadPdfBtn').addEventListener('click', () => {
-            downloadPDF();
+            setTimeout(downloadPDF, 300);
         });
 
         // Função para baixar o PDF
@@ -1066,29 +1253,34 @@ Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
             const doc = new jsPDF('p', 'pt', 'a4');
             const pdfContent = document.getElementById('pdfContent');
 
-            html2canvas(pdfContent, {
+            // Configurações para melhorar a qualidade do PDF
+            const options = {
                 scale: 2,
                 useCORS: true,
-                logging: false
-            }).then(canvas => {
+                logging: false,
+                backgroundColor: '#FFFFFF',
+                removeContainer: true,
+                windowHeight: pdfContent.scrollHeight
+            };
+
+            html2canvas(pdfContent, options).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
-                const imgWidth = doc.internal.pageSize.getWidth();
+                const imgWidth = doc.internal.pageSize.getWidth() - 40; // Margens de 20px cada lado
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-                let heightLeft = imgHeight;
-                let position = 0;
-                const margin = 40;
+                // Posicionamento inicial com margem superior
+                let position = 20;
+                const pageHeight = doc.internal.pageSize.getHeight() - 40; // Margem inferior
 
                 // Adicionar primeira página
-                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= (doc.internal.pageSize.getHeight() - margin);
+                doc.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+                position += imgHeight;
 
                 // Adicionar páginas adicionais se necessário
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
+                while (position > pageHeight) {
                     doc.addPage();
-                    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= (doc.internal.pageSize.getHeight() - margin);
+                    position = position - pageHeight;
+                    doc.addImage(imgData, 'PNG', 20, 20 - (position - imgHeight), imgWidth, imgHeight);
                 }
 
                 doc.save(fileName);
@@ -1099,9 +1291,8 @@ Seu consumo de água é no MININO: 5 Litros de água por dia</textarea>
         document.getElementById('resetBtn').addEventListener('click', () => {
             if (confirm('Tem certeza que deseja limpar todo o formulário? Esta ação não pode ser desfeita.')) {
                 document.getElementById('studentName').value = '';
-                document.getElementById('whatsapp').value = '';
-                document.getElementById('greeting').value = `
-Siga a ilustração para te ajudar a montar o prato, escolha apenas 1 opção de carboidrato, proteína, gordura e fruta, alguns alimentos vão ter substituição e vai está ao lado ou abaixo outros não, na dúvida me chama no WhatsApp ou se tiver outras opções que você goste talvez consigo substituir ou não, me avise
+                document.getElementById('waterAmount').value = '5';
+                document.getElementById('greeting').value = `Siga a ilustração para te ajudar a montar o prato, escolha apenas 1 opção de carboidrato, proteína, gordura e fruta, alguns alimentos vão ter substituição e vai está ao lado ou abaixo outros não, na dúvida me chama no WhatsApp ou se tiver outras opções que você goste talvez consigo substituir ou não, me avise
 E bora fazer acontecer, estou disponível no whatsapp 👍🏿
 .
 🔵PROTEÍNA 
@@ -1109,16 +1300,24 @@ E bora fazer acontecer, estou disponível no whatsapp 👍🏿
 🟡GORDURA
 🟢FRUTA
 .
-REEDUCAÇÃO ALIMENTAÇÃO
-.
-.
-Seu consumo de água é no MININO: 5 Litros de água por dia`;
+REEDUCAÇÃO ALIMENTAÇÃO`;
                 document.getElementById('mealName').value = '';
                 document.getElementById('mealsContainer').innerHTML = '';
                 mealCounter = 0;
                 foodItemCounter = 0;
             }
         });
+
+        // Ajustar automaticamente a altura do textarea de saudação
+        const greetingTextarea = document.getElementById('greeting');
+        function adjustTextareaHeight() {
+            greetingTextarea.style.height = 'auto';
+            greetingTextarea.style.height = (greetingTextarea.scrollHeight) + 'px';
+        }
+
+        greetingTextarea.addEventListener('input', adjustTextareaHeight);
+        window.addEventListener('load', adjustTextareaHeight);
+        window.addEventListener('resize', adjustTextareaHeight);
 
         // Adicionar alguns atalhos de teclado
         document.addEventListener('keydown', function (event) {
@@ -1145,20 +1344,6 @@ Seu consumo de água é no MININO: 5 Litros de água por dia`;
                     'Jantar',
                     'Ceia'
                 ];
-
-                // Adicionar exemplos de refeições automáticas
-                // Descomente o código abaixo se quiser que o aplicativo inicie com refeições de exemplo
-                /*
-                suggestedMeals.forEach(mealName => {
-                    const mealId = mealCounter++;
-                    const mealHtml = mealTemplate(mealId, mealName);
-                    
-                    const container = document.getElementById('mealsContainer');
-                    const div = document.createElement('div');
-                    div.innerHTML = mealHtml;
-                    container.appendChild(div.firstElementChild);
-                });
-                */
             }
         });
     </script>
