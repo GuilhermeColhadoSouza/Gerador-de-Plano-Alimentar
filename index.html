@@ -674,66 +674,67 @@
             body {
                 padding-bottom: 20px;
             }
-            
+
             .container {
                 padding: 20px;
                 margin: 15px;
                 border-radius: 12px;
             }
-            
+
             h1 {
                 font-size: 1.8rem;
                 line-height: 1.3;
             }
-            
+
             p.subtitle {
                 font-size: 1.1rem;
             }
-            
+
             .form-group {
                 margin-bottom: 20px;
             }
-            
+
             .meal-section {
                 padding: 18px;
             }
-            
+
             .meal-title {
                 font-size: 1.3rem;
             }
-            
+
             .remove-btn {
                 padding: 6px 10px;
                 font-size: 0.8rem;
             }
-            
+
             .food-category {
                 padding: 15px;
             }
-            
+
             .add-food-form button {
                 padding: 12px;
             }
-            
+
             .pdf-content {
                 padding: 20px;
                 margin: 15px auto;
             }
-            
+
             .pdf-header h2 {
                 font-size: 1.5rem;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
                 gap: 10px;
             }
-            
-            .left-buttons, .right-buttons {
+
+            .left-buttons,
+            .right-buttons {
                 width: 100%;
                 justify-content: stretch;
             }
-            
+
             button {
                 width: 100%;
                 justify-content: center;
@@ -745,69 +746,69 @@
                 padding: 15px;
                 margin: 10px;
             }
-            
+
             h1 {
                 font-size: 1.5rem;
             }
-            
+
             h2 {
                 font-size: 1.3rem;
                 margin-top: 25px;
                 margin-bottom: 15px;
             }
-            
-            textarea, 
-            input[type="text"], 
+
+            textarea,
+            input[type="text"],
             input[type="number"] {
                 padding: 12px;
                 font-size: 15px;
             }
-            
+
             .food-item {
                 padding: 8px 10px;
             }
-            
+
             .food-item-text {
                 font-size: 0.9rem;
             }
-            
+
             .add-meal-container {
                 flex-direction: column;
                 padding: 15px;
                 gap: 10px;
             }
-            
+
             .add-meal-container input {
                 width: 100%;
                 margin-bottom: 0;
             }
-            
+
             .add-meal-container button {
                 width: 100%;
             }
-            
+
             .action-buttons button {
                 padding: 10px 15px;
                 font-size: 0.9rem;
             }
-            
+
             .pdf-section h3 {
                 font-size: 1.2rem;
             }
-            
+
             .pdf-food-item {
                 font-size: 0.9rem;
             }
-            
+
             .pdf-water-info {
                 padding: 12px;
                 font-size: 0.9rem;
             }
-            
+
             .pdf-content {
                 padding: 15px;
             }
-            
+
             .close-preview {
                 top: 10px;
                 right: 10px;
@@ -815,13 +816,13 @@
                 height: 30px;
                 font-size: 18px;
             }
-            
+
             .water-input-container {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 5px;
             }
-            
+
             .water-input-container input {
                 width: 100%;
                 text-align: left;
@@ -833,29 +834,64 @@
                 padding: 12px;
                 margin: 8px;
             }
-            
+
             h1 {
                 font-size: 1.3rem;
             }
-            
+
             h2 {
                 font-size: 1.1rem;
             }
-            
+
             .meal-title {
                 font-size: 1.1rem;
             }
-            
+
             .food-category {
                 padding: 12px;
             }
-            
+
             .add-food-form {
                 flex-direction: column;
             }
-            
+
             .pdf-header h2 {
                 font-size: 1.2rem;
+            }
+        }
+
+        /* Estilos específicos para geração de PDF */
+        #pdfContent {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .pdf-page {
+            width: 100%;
+            page-break-after: avoid;
+            page-break-inside: avoid;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #pdfContent,
+            #pdfContent * {
+                visibility: visible;
+            }
+
+            #pdfContent {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
             }
         }
     </style>
@@ -1094,11 +1130,12 @@ REEDUCAÇÃO ALIMENTAÇÃO</textarea>
             }
 
             let pdfContent = `
-                <div class="pdf-header">
-                    <h2>Plano Alimentar</h2>
-                    <p><strong>Aluno:</strong> ${studentName}</p>
-                    <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
-                </div>
+                <div class="pdf-page">
+                    <div class="pdf-header">
+                        <h2>Plano Alimentar</h2>
+                        <p><strong>Aluno:</strong> ${studentName}</p>
+                        <p><strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+                    </div>
             `;
 
             if (greeting) {
@@ -1210,6 +1247,8 @@ REEDUCAÇÃO ALIMENTAÇÃO</textarea>
                 </div>
             `;
 
+            pdfContent += `</div>`; // Fechar div .pdf-page
+
             document.getElementById('pdfContent').innerHTML = pdfContent;
             return true;
         }
@@ -1236,54 +1275,77 @@ REEDUCAÇÃO ALIMENTAÇÃO</textarea>
         // Baixar o PDF
         document.getElementById('downloadBtn').addEventListener('click', () => {
             if (generatePDF()) {
-                setTimeout(downloadPDF, 300); // Pequeno delay para garantir que o conteúdo foi renderizado
+                setTimeout(generateAndDownloadPDF, 500);
             }
         });
 
         document.getElementById('downloadPdfBtn').addEventListener('click', () => {
-            setTimeout(downloadPDF, 300);
+            setTimeout(generateAndDownloadPDF, 500);
         });
 
-        // Função para baixar o PDF
-        function downloadPDF() {
+        // Nova função otimizada para gerar e baixar o PDF
+        function generateAndDownloadPDF() {
             const studentName = document.getElementById('studentName').value.trim() || 'plano-alimentar';
             const fileName = `${studentName.toLowerCase().replace(/\s+/g, '-')}-${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`;
 
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'pt', 'a4');
             const pdfContent = document.getElementById('pdfContent');
 
-            // Configurações para melhorar a qualidade do PDF
+            // Configurações para o html2canvas
             const options = {
                 scale: 2,
                 useCORS: true,
                 logging: false,
                 backgroundColor: '#FFFFFF',
                 removeContainer: true,
-                windowHeight: pdfContent.scrollHeight
+                windowHeight: pdfContent.scrollHeight,
+                scrollX: 0,
+                scrollY: 0,
+                allowTaint: true,
+                letterRendering: true
             };
 
+            // Criar um canvas do conteúdo
             html2canvas(pdfContent, options).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
-                const imgWidth = doc.internal.pageSize.getWidth() - 40; // Margens de 20px cada lado
+                const pdf = new jsPDF('p', 'mm', 'a4');
+
+                // Margens do PDF (em mm)
+                const marginLeft = 10;
+                const marginRight = 10;
+                const marginTop = 10;
+                const marginBottom = 10;
+
+                // Largura útil da página (210 - margens)
+                const pageWidth = 210 - marginLeft - marginRight;
+
+                // Altura útil da página (297 - margens)
+                const pageHeight = 297 - marginTop - marginBottom;
+
+                // Proporções da imagem
+                const imgWidth = pageWidth;
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-                // Posicionamento inicial com margem superior
-                let position = 20;
-                const pageHeight = doc.internal.pageSize.getHeight() - 40; // Margem inferior
+                // Variáveis para controle de paginação
+                let heightLeft = imgHeight;
+                let position = marginTop;
+                let currentPage = 1;
 
-                // Adicionar primeira página
-                doc.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
-                position += imgHeight;
+                // Adicionar a primeira página
+                pdf.addImage(imgData, 'PNG', marginLeft, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
 
-                // Adicionar páginas adicionais se necessário
-                while (position > pageHeight) {
-                    doc.addPage();
-                    position = position - pageHeight;
-                    doc.addImage(imgData, 'PNG', 20, 20 - (position - imgHeight), imgWidth, imgHeight);
+                // Enquanto houver conteúdo para adicionar em novas páginas
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight + marginTop;
+                    pdf.addPage();
+                    currentPage++;
+                    pdf.addImage(imgData, 'PNG', marginLeft, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
                 }
 
-                doc.save(fileName);
+                // Salvar o PDF
+                pdf.save(fileName);
             });
         }
 
